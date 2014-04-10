@@ -76,14 +76,14 @@ def set_area(zeta, gamma, l2g, n2c, N, M, x_base, y_base, cur_node, cur_element)
 N1 = [7, 4, 3, 2, 1, 1]
 M1 = [1, 1]
 
-N2 = [1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 8, 8, 8, 8, 10, 10, 12, 12, 14, 18, 20, 20]
+N2 = [1, 1, 2, 2, 3, 3, 4, 4, 5]
 M2 = M1[:]
 
 N3 = N2[:]
 M3 = [1, 1]
 
 N4 = N2[:]
-M4 = [1, 1, 2, 2, 2, 3, 3, 4, 4, 5, 5, 8, 8, 8, 10, 10, 12, 12, 14, 18, 20, 20]
+M4 = [1, 1, 2, 2, 2, 3, 3, 4, 4, 5]
 
 N5 = N1[:]
 M5 = M4[:]
@@ -361,10 +361,10 @@ outer_value = 0
 lower_value = -1
 higher_value = 1
 
-for i in range(0,4):
-    for node in list(edges[i][:,0]):
-        dir_value[0,node] = outer_value
-        dir_set[0,node] = 1
+# for i in range(0,4):
+#     for node in list(edges[i][:,0]):
+#         dir_value[0,node] = outer_value
+#         dir_set[0,node] = 1
         
 
 #     last_node = edges[i][-1,1]
@@ -392,7 +392,7 @@ for i in range(8,12):
 boundary_table = np.vstack((dir_set, dir_value))
 
 #  ------ PLOT CODE ------
-if True:
+if False:
     fig = plt.figure()
 
     for elem in range(local_to_global.shape[0]):
@@ -422,15 +422,15 @@ if True:
 
         plt.plot(x, y,linewidth=0.6, color='0.7')
 
-    #for i in range(0,dir_value.shape[1]):
-    #    if dir_set[0,i] == 1.0:
-    #        plt.plot(n2c[i,0], n2c[i,1], 'ro', markersize=3)
+    for i in range(0,dir_value.shape[1]):
+        if dir_set[0,i] == 1.0:
+            plt.plot(n2c[i,0], n2c[i,1], 'ro', markersize=3)
 
 
 
 
-    #plt.plot(x1, y1, 'ro')
-    #plt.plot(x2, y2, 'bo')
+    plt.plot(x1, y1, 'ro')
+    plt.plot(x2, y2, 'bo')
 
     #xlim = np.array([0, 1])
     #ylim = np.array([0, 1])
@@ -442,8 +442,8 @@ if True:
     plt.xlim(wx1,wx2)
     plt.ylim(wy1,wy2)
 
-    plt.xlim(0,1.1)
-    plt.ylim(0,1.8)
+    plt.xlim(0,0.35)
+    plt.ylim(0,0.35)
     #plt.axis('equal')
     plt.savefig('images/platten_mesh.pdf', dpi=500, bbox_inches='tight')
 

@@ -128,7 +128,8 @@ def contour_plot_ladung(info, tables, plots, u_h):
 
         #print(phi.max())
 
-        levels = np.arange(u_h.min(), u_h.max()+0.01, (u_h.max()-u_h.min())/10.)
+        #levels = np.arange(u_h.min(), u_h.max()+0.01, (u_h.max()-u_h.min())/10.)
+        levels = np.arange(-5.0, 5.5, 0.5)
 
         #maybe outside of loop
         c = mcolors.ColorConverter().to_rgb
@@ -212,6 +213,76 @@ def contour_plot_new(info, tables, plots, u_h):
 
 
     plt.savefig('images/contour_line.pdf', dpi=500, bbox_inches='tight')
+
+def contour_plot_neumann(info, tables, plots, u_h):
+    """
+    plots 
+    """
+
+    # x = np.arange(0, plots.x_max, plots.step)
+    # y = np.arange(0, plots.x_max, plots.step)
+    # xx,yy = np.meshgrid(x, y)
+    # zz = np.zeros(xx.shape)
+
+
+    plt.figure()
+
+    for r in range(0, info.number_of_elements):
+
+
+
+        i1 = tables.local_to_global[r, 0]
+        i2 = tables.local_to_global[r, 1]
+        i3 = tables.local_to_global[r, 2]
+        i4 = tables.local_to_global[r, 3]
+        x1 = tables.nodes_to_coordinates[i1, 0] 
+        x2 = tables.nodes_to_coordinates[i2, 0] 
+        x4 = tables.nodes_to_coordinates[i4, 0] 
+        y1 = tables.nodes_to_coordinates[i1, 1] 
+        y2 = tables.nodes_to_coordinates[i2, 1] 
+        y4 = tables.nodes_to_coordinates[i4, 1] 
+
+        x = np.arange(0, 1.2, 0.2)#plots.step)
+        y = np.arange(0, 1.2, 0.2)#plots.step)
+        xx,yy = np.meshgrid(x, y)
+
+
+
+        #local functions
+        phi1 = (1-xx) * (1-yy)
+        phi2 = xx * (1-yy)
+        phi3 = xx * yy
+        phi4 = (1-xx) * yy
+
+
+        #add weights
+        phi = u_h[i1]*phi1 + u_h[i2]*phi2 + u_h[i3]*phi3 + u_h[i4]*phi4
+        xx2 = (x2-x1)*xx + x1
+        yy2 = (y4-y1)*yy + y1
+
+        #print(phi.max())
+
+        #levels = np.arange(u_h.min(), u_h.max()+0.01, (u_h.max()-u_h.min())/10.)
+        levels = np.arange(-0.25, 0.25, 0.025)
+
+        #maybe outside of loop
+        c = mcolors.ColorConverter().to_rgb
+        rvb = helper.make_colormap(
+            [(0.5, 0.9, 1.0), (0.2, 0.6, 0.8), 0.5, (0.2, 0.6, 0.8), (0.0, 0.4, 0.6)])
+
+        plt.contour(xx2, yy2, phi, cmap = plt.get_cmap('cool'), levels = levels)# , linewith=0.2) plt.get_cmap('cool')
+    
+    plt.xlabel('$\mathbf{x}_1$')
+    plt.ylabel('$\mathbf{x}_2$')
+
+    #plt.xlim((fem.wx1,fem.wx2))
+    #plt.ylim((fem.wy1,fem.wy2))
+
+
+    plt.colorbar()
+
+
+    plt.savefig('images/neumann.pdf', dpi=500, bbox_inches='tight')
 
 
 def contour_plot(info, tables, plots, u_h):

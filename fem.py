@@ -29,18 +29,19 @@ wy1 = window[0,1]
 wx2 = window[1,0]
 wy2 = window[1,1]
 
-def rho(x): return 0#math.exp(-0.5/4**2*((x[0]-7)**2+(x[1]-10)**2))-math.exp(-0.5/4**2*((x[0]-13)**2+(x[1]-10)**2))
+def rho(x): 
+    return 0#math.exp(-0.5/4**2*((x[0]-7)**2+(x[1]-10)**2))-math.exp(-0.5/4**2*((x[0]-13)**2+(x[1]-10)**2))
 
 eps0 = 8.854*10**(-12)
 
-#def eps(x): 
-#    return eps0
-
 def eps(x): 
-    if  ( (x[0] > x1) and (x[0] < x2) and (x[1] > y1) and (x[1] < y2)):
-       return eps0*10
-    else: 
-       return eps0 #1 #return 1#+math.exp(-0.5/4**2*((x[1]-12)**2))*100
+   return eps0
+
+# def eps(x): 
+#     if  ( (x[0] > x1) and (x[0] < x2) and (x[1] > y1) and (x[1] < y2)):
+#         return eps0*10
+#     else: 
+#         return eps0 #1 #return 1#+math.exp(-0.5/4**2*((x[1]-12)**2))*100
 
 
 #and (x[0] < x2) and (x[1] > y1) and (x[1] < y2)
@@ -62,6 +63,7 @@ class Tables:
         self.local_to_global = None
         self.nodes_to_coordinates = None
         self.boundary_table = None
+        self.edge_to_global = None
 
 class Plots:
     """Contains plot data"""
@@ -97,8 +99,9 @@ def run():
         #create element_table
         #data.tables.element_table = preparation.create_element_table(data.info) #unused?
 
-        #import build
-        import build_viertel as build
+        import build_backup as build
+        #import build_viertel as build
+        #import build_neumann as build
         #import build_ladung as build
 
         data.info.elements_per_line = -1
@@ -108,6 +111,9 @@ def run():
         data.info.nodes_per_element = build.get_nodes_per_element()
         data.info.number_of_nodes = build.get_number_of_nodes()
 
+        
+
+
         #create local_to_global table
         #data.tables.local_to_global = preparation.create_local_to_global(data.info)
         data.tables.local_to_global = build.get_local_to_global().copy()
@@ -115,7 +121,12 @@ def run():
         #create nodes_to_coordinates
         #data.tables.nodes_to_coordinates = preparation.create_nodes_to_coordinates(data.info)
         data.tables.nodes_to_coordinates = build.get_nodes_to_coordinates().copy()
-        print data.tables.nodes_to_coordinates
+        #print data.tables.nodes_to_coordinates
+
+        #neumann
+        #data.tables.edge_to_global = build.get_edge_to_global().copy()
+
+        
 
 
         #create boundary_table

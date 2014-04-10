@@ -13,16 +13,18 @@ import assembly
 #def rho(x): return 0#math.exp(-0.5/4**2*((x[0]-4)**2+(x[1]-12)**2))*1e-10-math.exp(-0.5/4**2*((x[0]-20)**2+(x[1]-12)**2))*1e-10
 #def eps(x): return 1#return if ((x[0] > x1 ) and (x[0] < x2) and (x[1] > y1) and (x[1] < y2))#1
 
+
+
 with Timer('importing solution'):
-    nodes_to_coordinates = helper.read_matrix_from_file('data/nodes_to_coordinates_platten.txt')
+    nodes_to_coordinates = helper.read_matrix_from_file('data/nodes_to_coordinates.txt')
     
 
-    local_to_global = helper.read_matrix_from_file('data/local_to_global_platten.txt')
-    boundary_table = helper.read_matrix_from_file('data/boundary_table_platten.txt')
+    local_to_global = helper.read_matrix_from_file('data/local_to_global.txt')
+    boundary_table = helper.read_matrix_from_file('data/boundary_table.txt')
 
     #print nodes_to_coordinates
 
-    u_h = helper.read_matrix_from_file('data/u_h_platten.txt')
+    u_h = helper.read_matrix_from_file('data/u_h.txt')
 
 
 with Timer('Calculation 1'):
@@ -114,6 +116,7 @@ with Timer('Calculation 1'):
 
 
     C_ = energy/(1-(-1))**2
+    #C_ = energy/(1)**2
 
  
     print('C_ = ' + str(C_))

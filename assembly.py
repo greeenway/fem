@@ -12,6 +12,20 @@ linear_trial_funcs = [
     lambda xi1, xi2: (1-xi1)*xi2,
 ]
 
+linear_trial_funcs_1D = [
+    lambda xi: (1-xi),
+    lambda xi: xi,
+]
+
+dn_funcs = [
+    lambda xi: -math.sin(math.pi*xi[0]),
+    lambda xi: 1,
+    lambda xi: math.sin(math.pi*xi[0]),
+    lambda xi: 1,
+]
+
+
+
 def assemble_equations(info, tables):
     """
     Assembles the final system of linear equations to be solved.
@@ -50,6 +64,26 @@ def assemble_equations(info, tables):
 
                 K_h[i,j] = K_h[i,j] + K_r[alpha,beta] 
 
+    # --- neumann ---
+    if False:
+        N_edges = tables.edge_to_global.shape[0]
+        e_tab = tables.edge_to_global
+
+        #print N_edges
+        for e in range(0,N_edges):
+            #calculate f^(e)
+
+            f_e = _calculate_f_e(info, tables, e )
+
+            for alpha in range(0,2):
+
+                f_h[ e_tab[e, alpha] ] = f_e[alpha]
+
+
+
+    # --- neumann ---
+
+
     #dirichlet boundary
     b_tmp = tables.boundary_table[0,:]*tables.boundary_table[1,:]
 
@@ -76,6 +110,40 @@ def assemble_equations(info, tables):
 
     return equ
 
+def _calculate_f_e(info, tables , e):
+    f_e = np.zeros(shape=(2,1))
+
+    e_tab = tables.edge_to_global
+    f1 = e_tab[e, 3] #numbers of functions in T^(r) -> linear_trial_funcs[f1]
+    f2 = e_tab[e, 4]
+
+    i1 = e_tab[e, 0]
+    i2 = e_tab[e, 1]
+    nr = e_tab[e, 2]
+
+    x1 = tables.nodes_to_coordinates[i1, 0]
+    y1 = tables.nodes_to_coordinates[i1, 1]
+
+    x2 = tables.nodes_to_coordinates[i2, 0]
+    y2 = tables.nodes_to_coordinates[i2, 1]
+
+    length = math.sqrt((x2-x1)**2+(y2-y1)**2)
+
+    integ2 = lambda xi: dn_funcs[nr](_ref_e_to_global(x1, x2, y1, y2, xi))*linear_trial_funcs_1D[1](xi) * length
+    integ1 = lambda xi: dn_funcs[nr](_ref_e_to_global(x1, x2, y1, y2, xi))*linear_trial_funcs_1D[0](xi) * length
+
+    f_e[0] = numeric.gauss_1D_6(integ1)
+    f_e[1] = numeric.gauss_1D_6(integ2)
+
+
+    return f_e
+
+def _ref_e_to_global(x1, x2, y1, y2, xi):
+
+    tx1 = (x2-x1)*xi + x1
+    tx2 = (y2-y1)*xi + y1
+
+    return (tx1,tx2)
 
 def _calculate_K_r(x1, x2, x4, y1, y2, y4, eps): 
     """
@@ -155,7 +223,7 @@ def _calculate_f_r(x1, x2, x4, y1, y2, y4, rho):
     
     for i in range(0,4):
         
-        integrand = lambda xi1, xi2: rho(_ref_to_global(x1, x2, x4, y1, y2, y4, (xi1,xi2)))*phi[i](xi1,xi2)*a_dJ_r
+        integrand = lambda xi1, xi2: fem.rho(_ref_to_global(x1, x2, x4, y1, y2, y4, (xi1,xi2)))*phi[i](xi1,xi2)*a_dJ_r
         f_r[i,0] = numeric.gauss_2D_3(integrand)
 
     return f_r
